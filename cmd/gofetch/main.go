@@ -189,7 +189,10 @@ func collectGPUInfo(_ context.Context) (*Info, error) {
 		if err == nil && desc != "" {
 			gpus = append(gpus, desc)
 		}
-		gpuKey.Close()
+
+		if err = gpuKey.Close(); err != nil {
+			return nil, fmt.Errorf("failed to close registry key: %w", err)
+		}
 	}
 
 	return &Info{GPUs: gpus}, nil
