@@ -10,12 +10,12 @@ GOMOD=$(GOCMD) mod
 BINARY_NAME=gofetch
 
 # Source directory
-SRC_DIR=./cmd/gofetch
+SRC_DIR=$(CURDIR)/cmd/gofetch
 
 # Build directory
-BUILD_DIR=bin
+BUILD_DIR=$(CURDIR)/bin
 
-.PHONY: all build clean test coverage deps run help install uninstall
+.PHONY: all build build-release print clean test coverage deps run help install uninstall
 
 ## all: Default target
 all: clean deps test build
@@ -23,6 +23,10 @@ all: clean deps test build
 ## build: Build the binary
 build:
 	$(GOBUILD) -o $(BUILD_DIR)/ -v $(SRC_DIR)
+
+## build-release: Build the binary for release
+build-release:
+	$(GOBUILD) -o $(BUILD_DIR)/ -ldflags '-s -w' -v $(SRC_DIR)
 
 ## clean: Clean build artifacts
 clean:
@@ -40,7 +44,7 @@ deps:
 
 ## run: Build and run the binary
 run: build
-	./$(BUILD_DIR)/$(BINARY_NAME)
+	$(BUILD_DIR)/$(BINARY_NAME)
 
 ## install: Install binary to GOPATH/bin
 install:
