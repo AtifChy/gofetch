@@ -3,6 +3,8 @@ package collector
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"sync"
 
 	"github.com/AtifChy/gofetch/internal/types"
@@ -11,7 +13,12 @@ import (
 type CollectorFunc func(context.Context) (*types.Info, error)
 
 func Collect(ctx context.Context, collectors []CollectorFunc) (*types.Info, error) {
-	infoChan := make(chan *types.Info, len(collectors))
+	type result struct {
+		info *types.Info
+		err  error
+	}
+
+	resultChan := make(chan result, len(collectors))
 	var wg sync.WaitGroup
 
 	wg.Add(len(collectors))
@@ -19,28 +26,35 @@ func Collect(ctx context.Context, collectors []CollectorFunc) (*types.Info, erro
 		go func(collector CollectorFunc) {
 			defer wg.Done()
 			info, err := collector(ctx)
-			if err != nil {
-				// Handle error appropriately
-				return
-			}
-			infoChan <- info
+			resultChan <- result{info: info, err: err}
 		}(collect)
 	}
 
 	go func() {
 		wg.Wait()
-		close(infoChan)
+		close(resultChan)
 	}()
 
 	final := &types.Info{}
-	for info := range infoChan {
-		mergeInfo(final, info)
+	successCount := 0
+
+	for result := range resultChan {
+		if result.err != nil {
+			log.Printf("Error collecting info: %s", result.err)
+			continue
+		}
+		merge(final, result.info)
+		successCount++
+	}
+
+	if successCount == 0 {
+		return nil, fmt.Errorf("all collectors failed to retrieve information")
 	}
 
 	return final, nil
 }
 
-func mergeInfo(dst, src *types.Info) {
+func merge(dst, src *types.Info) {
 	if src.Host.Hostname != "" {
 		dst.Host = src.Host
 	}
