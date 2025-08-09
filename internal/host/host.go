@@ -1,4 +1,5 @@
-package main
+// Package host provides functionality to collect host information
+package host
 
 import (
 	"context"
@@ -9,24 +10,17 @@ import (
 	"time"
 
 	"github.com/shirou/gopsutil/v4/host"
+
+	"github.com/AtifChy/gofetch/internal/types"
 )
 
-type Host struct {
-	Username        string
-	Hostname        string
-	OS              string
-	Kernel          string
-	PlatformVersion string
-	Uptime          time.Duration
-}
-
-func collectHostInfo(ctx context.Context) (*Info, error) {
+func CollectHostInfo(ctx context.Context) (*types.Info, error) {
 	hostInfo, err := host.InfoWithContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	host := Host{
+	host := types.Host{
 		Username:        getUsername(),
 		Hostname:        hostInfo.Hostname,
 		OS:              hostInfo.Platform + " " + hostInfo.KernelArch,
@@ -35,7 +29,7 @@ func collectHostInfo(ctx context.Context) (*Info, error) {
 		Uptime:          time.Duration(hostInfo.Uptime) * time.Second,
 	}
 
-	return &Info{
+	return &types.Info{
 		Host: host,
 	}, nil
 }

@@ -1,15 +1,16 @@
 //go:build windows
 
-package main
+package gpu
 
 import (
 	"context"
 	"fmt"
 
+	"github.com/AtifChy/gofetch/internal/types"
 	"golang.org/x/sys/windows/registry"
 )
 
-func collectGPUInfo(_ context.Context) (*Info, error) {
+func CollectGPUInfo(_ context.Context) (*types.Info, error) {
 	key, err := registry.OpenKey(
 		registry.LOCAL_MACHINE,
 		`SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}`,
@@ -24,7 +25,7 @@ func collectGPUInfo(_ context.Context) (*Info, error) {
 		return nil, fmt.Errorf("failed to read subkeys: %w", err)
 	}
 
-	var out []GPU
+	var out []types.GPU
 
 	for _, subkey := range subkeys {
 		if len(subkey) != 4 || subkey[0] < '0' || subkey[0] > '9' {
@@ -41,7 +42,7 @@ func collectGPUInfo(_ context.Context) (*Info, error) {
 			continue
 		}
 
-		var gpu GPU
+		var gpu types.GPU
 
 		name, _, err := gpuKey.GetStringValue("DriverDesc")
 		if err == nil && name != "" {
@@ -60,5 +61,5 @@ func collectGPUInfo(_ context.Context) (*Info, error) {
 		}
 	}
 
-	return &Info{GPUs: out}, nil
+	return &types.Info{GPUs: out}, nil
 }

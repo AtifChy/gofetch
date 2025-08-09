@@ -1,12 +1,14 @@
 //go:build windows
 
-package main
+package display
 
 import (
 	"context"
 	"errors"
 	"syscall"
 	"unsafe"
+
+	"github.com/AtifChy/gofetch/internal/types"
 )
 
 var (
@@ -35,8 +37,8 @@ type monitorInfoEx struct {
 	SzDevice  [CCHDEVICENAME]uint16
 }
 
-func collectDisplayInfo(_ context.Context) (*Info, error) {
-	var out []Display
+func CollectDisplayInfo(_ context.Context) (*types.Info, error) {
+	var out []types.Display
 
 	callback := syscall.NewCallback(func(hMon, hdc, lprc, lParam uintptr) uintptr {
 		var mi monitorInfoEx
@@ -66,7 +68,7 @@ func collectDisplayInfo(_ context.Context) (*Info, error) {
 		h, _, _ := procGetDeviceCaps.Call(hdcMon, uintptr(VERTRES))
 		f, _, _ := procGetDeviceCaps.Call(hdcMon, uintptr(VREFRESH))
 
-		info := Display{
+		info := types.Display{
 			Width:       int32(w),
 			Height:      int32(h),
 			RefreshRate: int32(f),
@@ -82,7 +84,7 @@ func collectDisplayInfo(_ context.Context) (*Info, error) {
 		return nil, errors.New("failed to enumerate display monitors")
 	}
 
-	return &Info{
+	return &types.Info{
 		Displays: out,
 	}, nil
 }
