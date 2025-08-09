@@ -63,20 +63,20 @@ The tool will automatically detect your system and display relevant information 
 
 ```
 gofetch/
-├── cmd/gofetch/            # Main application code
-│   ├── main.go             # Entry point
-│   ├── cpu.go              # CPU information gathering
-│   ├── memory.go           # Memory usage statistics
-│   ├── disk.go             # Disk and storage information
-│   ├── gpu.go              # GPU information (cross-platform)
-│   ├── gpu_windows.go      # Windows-specific GPU implementation
-│   ├── display.go          # Display information (cross-platform)
-│   ├── display_windows.go  # Windows-specific display implementation
-│   └── host.go             # Host system information
-├── go.mod                  # Go module definition
-├── go.sum                  # Go module checksums
-├── Makefile                # Build automation
-└── LICENSE                 # Project license
+├── cmd/gofetch/              # Main application code
+│   ├── main.go               # Entry point
+│   ├── cpu.go                # CPU information gathering
+│   ├── memory.go             # Memory usage statistics
+│   ├── disk.go               # Disk and storage information
+│   ├── gpu.go                # GPU information (cross-platform)
+│   ├── gpu_windows.go        # Windows-specific GPU implementation
+│   ├── display.go            # Display information (cross-platform)
+│   ├── display_windows.go    # Windows-specific display implementation
+│   └── host.go               # Host system information
+├── go.mod                    # Go module definition
+├── go.sum                    # Go module checksums
+├── Makefile                  # Build automation
+└── LICENSE                   # Project license
 ```
 
 ## Development
@@ -106,7 +106,7 @@ make clean
 
 ## License
 
-This project is licensed under the terms specified in the LICENSE file.
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
 
 ## Acknowledgments
 
