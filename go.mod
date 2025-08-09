@@ -4,6 +4,7 @@ go 1.24.6
 
 require (
 	github.com/dustin/go-humanize v1.0.1
+	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
 	github.com/shirou/gopsutil/v4 v4.25.7
 	golang.org/x/sys v0.35.0
 )
