@@ -13,16 +13,12 @@ import (
 )
 
 type Info struct {
-	OS              string
-	Hostname        string
-	KernelVersion   string
-	PlatformVersion string
-	Displays        []Display
-	CPU             CPU
-	GPUs            []GPU
-	Memory          Memory
-	Disks           []Disk
-	Uptime          time.Duration
+	Host     Host
+	Displays []Display
+	CPU      CPU
+	GPUs     []GPU
+	Memory   Memory
+	Disks    []Disk
 }
 
 func main() {
@@ -75,11 +71,8 @@ func main() {
 }
 
 func mergeInfo(dst, src *Info) {
-	if src.OS != "" {
-		dst.OS = src.OS
-		dst.KernelVersion = src.KernelVersion
-		dst.PlatformVersion = src.PlatformVersion
-		dst.Uptime = src.Uptime
+	if src.Host.Hostname != "" {
+		dst.Host = src.Host
 	}
 
 	if len(src.Displays) > 0 {
@@ -104,14 +97,13 @@ func mergeInfo(dst, src *Info) {
 }
 
 func displayInfo(info *Info) {
-	title := getTitle()
+	title := fmt.Sprintf("%s@%s", info.Host.Username, info.Host.Hostname)
 	fmt.Printf("%s\n", title)
-
 	fmt.Println(strings.Repeat("-", len(title)))
 
-	fmt.Printf("OS: %s\n", info.OS)
-	fmt.Printf("Kernel: %s %s (%s)\n", getKernelName(), info.KernelVersion, info.PlatformVersion)
-	fmt.Printf("Uptime: %s\n", durafmt.Parse(info.Uptime).LimitFirstN(2).String())
+	fmt.Printf("OS: %s\n", info.Host.OS)
+	fmt.Printf("Kernel: %s (%s)\n", info.Host.Kernel, info.Host.PlatformVersion)
+	fmt.Printf("Uptime: %s\n", durafmt.Parse(info.Host.Uptime).LimitFirstN(2).String())
 
 	displayStr := "Display: "
 	for i, display := range info.Displays {
